@@ -1,0 +1,11 @@
+-- Minimum fuctionalities --
+
+DONE - 1. One kind of monster with motion and which can kill players
+TODO - 2. Monster can be inflated by the hero’s pump.
+DONE - 3. Rocks that the player cannot move through
+
+
+- Added monsters that can move around. If the hero touches the monster, then
+  the console will print "Hero died"
+  
+- If the Player presses 

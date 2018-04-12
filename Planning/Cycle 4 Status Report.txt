@@ -1,0 +1,5 @@
+-- Minimum fuctionalities --
+
+TODO - 1. Advancing the next level on victory.
+TODO - 2. Everything else in the basic game.
+TODO - 3. Whatever features you team wants to add!

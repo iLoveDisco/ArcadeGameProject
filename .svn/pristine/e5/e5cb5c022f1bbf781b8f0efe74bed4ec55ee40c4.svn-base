@@ -1,0 +1,71 @@
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D.Double;
+
+public class OneUp extends GameObject{
+
+	public OneUp(int x, int y, GameObjectHandler handler) {
+		super(x, y, handler);
+		// TODO Auto-generated constructor stub.
+	}
+
+	@Override
+	public void render(Graphics2D g2) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	public void die() {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWith(GameObject other) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithDirt(Dirt thisDirt) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithHero(Hero hero) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithMonster(Monster thisMonster) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithRock(Rock thisRock) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithFire(Double fireRect) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithPump(Double pumpRect) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithFruit(Fruit fruit) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+}

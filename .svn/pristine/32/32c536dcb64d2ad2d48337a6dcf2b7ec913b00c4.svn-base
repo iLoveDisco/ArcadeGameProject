@@ -1,0 +1,158 @@
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Random;
+
+public class Monster extends Character{
+
+	private GameObjectHandler handler;
+	public Rectangle2D.Double hitBox;
+	protected int dx;
+	protected int dy = 0;
+	public boolean isGhost;
+	public Monster(int x, int y, ID id, GameObjectHandler handler) {
+		super(x, y, id, handler);
+		this.handler = handler;
+		this.dx = 1;
+	}
+	
+	@Override
+	public boolean checkLegalMove(int dx, int dy) {
+		int futureX = this.x + dx;
+		int futureY = this.y + dy;
+		
+		
+		for(int i = 0; i < handler.objects.size(); i++){
+			GameObject object = handler.objects.get(i);
+			if(object.getID().equals(ID.Dirt)){
+				Dirt dirt = (Dirt) object;
+				if(((dirt.x == futureX + 53 || dirt.x == futureX - 53) && dirt.y == futureY) && !dirt.isDug){
+					return false;
+				}
+			} else if(object.getID().equals(ID.Hero)){
+				Hero hero = (Hero) object;
+				if((hero.x == this.x + 53 || hero.x == this.x - 53) && hero.y == this.y){
+					hero.die();
+				}
+			}
+		}
+		return true;
+	}
+	
+	@Override
+	public void updatePosition(int dx, int dy){
+		if(this.isGhost){
+			System.out.println(this.x);
+			this.x += dx;
+			this.y += dy;
+			return;
+		}
+		
+		if(this.checkLegalMove(dx, dy)){
+//			System.out.println("attempting move");
+			this.x += dx;
+			this.y += dy;
+			//System.out.println(this.x);
+		} else {
+			this.dx *= -1;
+		}
+	}
+	
+	public void ghostMode(){
+		int heroX = this.handler.getHero().x;
+		int heroY = this.handler.getHero().y;
+		if(this.x < heroX){
+			this.dx = 1;
+		} else if(this.x == heroX){
+			this.dx = 0;
+		} else {
+			this.dx = -1;
+		}
+		
+		if(this.y > heroY){
+			this.dy = -1;
+		} else if(this.y == heroY){
+			this.dy = 0;
+		} else {
+			this.dy = 1;
+		}	
+	}
+	
+	public void turnToGhost(){
+		Random r = new Random();
+		int randomInt = r.nextInt(1000);
+		if(randomInt == 1){
+			this.isGhost = true;
+		}
+	}
+	
+	public void checkForTunnelInGhost(){
+		for(int i = 0; i < handler.objects.size(); i++){
+			GameObject object = handler.objects.get(i);
+			if(object.getID().equals(ID.Dirt)){
+				Dirt dirt = (Dirt) object;
+				if(this.x == dirt.x && this.y == dirt.y && dirt.isDug){
+					this.isGhost = false;
+				}
+			}
+		}
+	}
+	
+	public void inflate() {
+		this.pookaHeight += 1;
+		this.pookaWidth += 1;
+	}
+	
+	@Override
+	public void render(Graphics2D g2) {
+		
+	}
+
+	@Override
+	void collideWith(GameObject other) {
+		other.collideWithMonster(this);
+		
+	}
+
+	@Override
+	void collideWithDirt(Dirt thisDirt) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithHero(Hero hero) {
+		hero.collideWithMonster(this);
+	}
+
+	@Override
+	void collideWithMonster(Monster thisMonster) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithRock(Rock thisRock) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithFire(Fygar thisFygar) {
+		//Does nothing
+	}
+
+	@Override
+	void collideWithPump(Hero thisHero) {
+		
+		
+	}
+
+	@Override
+	void collideWithFruit(Fruit fruit) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	
+
+}

@@ -1,0 +1,72 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+public class Fygar extends Monster{
+	private int fygarHeight = 53;
+	private int fygarWidth = 53;
+	private GameObjectHandler handler;
+	public boolean fireOut;
+	public Rectangle2D.Double fireRect;
+	private boolean isInverted;
+	private boolean isFireVertical;
+	private int fireLength = 0;
+	private int fireWidth = 10;
+	
+	public Fygar(int x, int y, ID id, GameObjectHandler handler) {
+		super(x, y, id, handler);
+		this.hitBox = new Rectangle2D.Double(this.x, y, fygarHeight, fygarWidth);
+		this.handler = handler;
+		this.fireRect = new Rectangle2D.Double(hitBox.getCenterX() + (hitBox.getWidth()), hitBox.getCenterY(), fireLength, fireWidth);
+	}
+	
+	@Override
+	public void render(Graphics2D g2) {
+		this.checkIfHitRock();
+		this.updatePosition(this.dx, 0);
+		this.hitBox = new Rectangle2D.Double(this.x, y, fygarHeight, fygarWidth);
+		g2.setColor(Color.GREEN);
+		g2.fill(hitBox);
+		if(this.hitBox.intersects(this.handler.getHero().pumpRect)) {
+			this.dx = 0;
+			this.inflate();
+		}
+		if(this.fygarHeight >= 83) {
+			this.die();
+		}
+	}
+	public void die() {
+		this.handler.removeObject(this);
+		handler.points += 200;
+	}
+	public void inflate() {
+		this.fygarHeight += 1;
+		this.fygarWidth += 1;
+	}
+	
+	public void checkIfHitRock() {
+		for(int i = 0; i < handler.objects.size(); i++){
+			GameObject object = handler.objects.get(i);
+			if(object.getID().equals(ID.Rock)){
+				Rock rock = (Rock) object;
+				
+				if(hitBox.intersects(rock.rect)){
+					this.die();
+					return;
+				}
+			}
+		}
+	}
+
+	public void breathFire(){
+		this.fireOut = true;
+	}
+	
+	
+	@Override
+	public void tick() {
+		// TODO Auto-generated method stub
+		
+	}
+}
+

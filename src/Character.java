@@ -1,0 +1,39 @@
+public abstract class Character extends GameObject {
+	/**
+	 * This constructs the character at position (x,y) and adds the character object to the handler
+	 * @param x
+	 * @param y
+	 * @param handler
+	 */
+	public Character(int x, int y, GameObjectHandler handler) {
+		super(x, y, handler);
+	}
+	/**
+	 * This method updates the position of the individual character object.
+	 * It also makes sure that the character object is not moving off the screen.
+	 * The dx and the dy are the change in the character's x and y coordinates when the character moves.
+	 * @param dx
+	 * @param dy
+	 */
+	public void updatePosition(int dx, int dy) {
+		if (this.x + dx < 15 || this.x + dx > 800) {
+			return;
+		}
+		if (this.y + dy < 150 || this.y + dy > 892) {
+			return;
+		}
+		if (this.checkLegalMove(dx, dy)) {
+			this.x += dx;
+			this.y += dy;
+		}
+	}
+	/**
+	 * Checks to see if the move the character is making is legal.
+	 * This is an abstract method because what move is legal for each character varies.
+	 * @param dx
+	 * @param dy
+	 * @return
+	 */
+	public abstract boolean checkLegalMove(int dx, int dy);
+
+}

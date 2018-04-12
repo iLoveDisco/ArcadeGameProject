@@ -1,0 +1,119 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+public class Fygar extends Monster {
+	private BufferedImage fireLeft;
+	private BufferedImage fireRight;
+	protected boolean isFireInverted = false;
+	protected boolean isFireVertical = false;
+	protected int fireLength = 90;
+	protected int fireWidth = 20;
+	protected int fireTimer = 0;
+	protected boolean fireOut;
+	/**
+	 * Constructs the fygar object at the given x and y coordinates and adds it to the game object handler
+	 * Also constructs the fire rect that will be created when fygar breathes fire
+	 * @param x
+	 * @param y
+	 * @param handler
+	 */
+	public Fygar(int x, int y, GameObjectHandler handler) {
+		super(x, y, handler);
+		this.height = this.BLOCKSIZE;
+		this.width = this.BLOCKSIZE;
+		this.hitBox = new Rectangle2D.Double(this.x, y, this.height, this.width);
+		super.fireRect = new Rectangle2D.Double(hitBox.getCenterX(), hitBox.getCenterY(), fireLength, fireWidth);
+	}
+
+	@Override
+	public void render(Graphics2D g2) {
+		g2.setColor(Color.GREEN);
+		super.render(g2);
+		this.fireTimer(g2);
+		this.updateFire(g2);
+	}
+	
+	public void updateFire(Graphics2D g2) {
+		if (this.hitBox.intersects(this.handler.hero.pumpRect)) {
+			this.dx = 0;
+			this.fireOut = false;
+			this.inflate();
+		}
+		if (this.dx < 0) {
+			isFireInverted = true;
+		}
+		if (this.dx > 0) {
+			isFireInverted = false;
+		}
+		try {
+			fireLeft = ImageIO.read(new File("fireLeft.png"));
+			fireRight = ImageIO.read(new File("fireRight.png"));
+		} catch (IOException e) {
+			throw new RuntimeException("Error drawing Hero: " + e);
+		}
+		if (this.fireOut) {
+			if (!isFireInverted && !isFireVertical) {
+				super.fireRect = new Rectangle2D.Double(hitBox.getCenterX() + (hitBox.getWidth() / 2),
+						hitBox.getCenterY(), fireLength, fireWidth);
+				g2.drawImage(fireLeft, (int) hitBox.getCenterX() + (int) (hitBox.getWidth() / 2),
+						(int) hitBox.getCenterY(), null);
+			}
+			if (isFireInverted && !isFireVertical) {
+				super.fireRect = new Rectangle2D.Double(hitBox.getCenterX() - fireLength - hitBox.getWidth() / 2,
+						hitBox.getCenterY(), fireLength, fireWidth);
+				g2.drawImage(fireLeft, (int) hitBox.getCenterX() - fireLength - (int) hitBox.getWidth() / 2,
+						(int) hitBox.getCenterY(), null);
+			}
+		} else {
+			super.fireRect.width = 0;
+		}
+	}
+	/**
+	 * Method that lets the fygar breathe fire
+	 */
+	public void breathFire() {
+		this.fireOut = true;
+	}
+	/**
+	 * The timer for how long the fire rect will be out. Resets after a while until the
+	 *  fygar breathes fire again
+	 */
+	private void fireTimer(Graphics2D g2) {
+		if (this.fireTimer >= 500) {
+			this.fireOut = false;
+			this.fireTimer = 0;
+			if (isFireInverted) {
+				this.dx = -1;
+			} else {
+				this.dx = 1;
+			}
+			return;
+		}
+		if (this.fireTimer >= 420 && !super.hasBeenInflated) {
+			this.breathFire();
+			this.fireTimer++;
+		} else {
+			this.fireTimer++;
+		}
+
+		if (this.fireTimer >= 350 && this.fireTimer <= 420) {
+			this.dx = 0;
+			this.fireTimer++;
+			if(this.fireTimer % 12 == 0){
+				g2.setColor(Color.RED);
+				g2.fill(this.hitBox);
+			} else{
+				g2.setColor(Color.GREEN);
+				g2.fill(this.hitBox);
+			}
+		} else {
+			this.fireTimer++;
+		}
+	}
+}

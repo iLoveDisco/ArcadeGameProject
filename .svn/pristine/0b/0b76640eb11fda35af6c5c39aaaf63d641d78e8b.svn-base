@@ -1,0 +1,61 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+public class Fruit extends GameObject {
+	private GameObjectHandler handler;
+	public Rectangle2D.Double rect;
+
+	public Fruit(int x, int y, GameObjectHandler handler) {
+		super(x, y, handler);
+		this.handler = handler;
+		this.rect = new Rectangle2D.Double(this.x, this.y, this.BLOCKSIZE, this.BLOCKSIZE);
+	}
+
+	@Override
+	public void render(Graphics2D g2) {
+		g2.setColor(Color.CYAN);
+		g2.fill(this.rect);
+	}
+
+	@Override
+	void collideWith(GameObject other) {
+		other.collideWithFruit(this);
+	}
+
+	@Override
+	void collideWithDirt(Dirt thisDirt) {
+		// Nothing happens
+	}
+
+	@Override
+	void collideWithHero(Hero hero) {
+		hero.collideWithFruit(this);
+	}
+
+	@Override
+	void collideWithMonster(Monster thisMonster) {
+		// Nothing happens
+	}
+
+	@Override
+	void collideWithRock(Rock thisRock) {
+		// Nothing happens.
+	}
+
+	@Override
+	void collideWithFire(Rectangle2D.Double fireRect) {
+		// Nothing happens
+	}
+
+	@Override
+	void collideWithPump(Rectangle2D.Double pumpRect) {
+		// Nothing happens
+	}
+
+	@Override
+	void collideWithFruit(Fruit fruit) {
+		// Nothing happens
+	}
+
+}

@@ -1,0 +1,8 @@
+
+public enum ID {	
+	Hero(),
+	Rock(),
+	Pooka(),
+	Fruit(),
+	Dirt();
+}

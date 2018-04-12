@@ -1,0 +1,68 @@
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.util.LinkedList;
+/**
+ * This class handles all objects on the screen(The hero, monsters, rocks, dirt, etc.)
+ * It's main job is to update the interactions between the classes.
+ */
+public class GameObjectHandler {
+	LinkedList<GameObject> objects = new LinkedList<>();
+	public int fallenRocks = 0;
+	public int points = 0;
+	public boolean running = true;
+	/**
+	 * Loops through every object and renders them.
+	 */
+	public void render(Graphics2D g2) {
+		if(!this.running){
+			g2.setColor(Color.WHITE);
+			g2.setFont(new Font("Times New Roman", Font.PLAIN, 100));
+			g2.drawString("You Died Exit Game", 100, 200);
+			return;
+		}
+		for (int i = 0; i < objects.size(); i++) {
+			GameObject tempObject = objects.get(i);
+			tempObject.render(g2);
+		}
+		if(this.fallenRocks == 2){
+			this.createFruit();
+			this.fallenRocks++;
+		}
+		g2.setFont(new Font("Times New Roman", Font.PLAIN, 50));
+		g2.drawString("Points: " + this.points, 200, 100);
+		handleCollisions();
+	}
+	private void handleCollisions() {
+		for(GameObject o1: objects){
+			for(GameObject o2: objects){
+				o1.collideWith(o2);
+			}
+		}
+	}
+	private void createFruit() {
+		this.addObject(new Fruit(424 + 15, 424 + 150, ID.Fruit, this));
+	}
+	
+	public void addObject(GameObject object){
+		objects.add(object);
+	}
+	
+	
+	public void removeObject(GameObject object){
+		objects.remove(object);
+	}
+	/**
+	 * Gets the Hero object from the objects
+	 */
+	public Hero getHero(){
+		for(int i = 0; i < objects.size(); i++){
+			GameObject object = objects.get(i);
+			if(object.getID().equals(ID.Hero)){
+				return (Hero) object;
+			}
+		}
+		return null;	
+	}
+	
+}

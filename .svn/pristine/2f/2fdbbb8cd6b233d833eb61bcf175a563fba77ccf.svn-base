@@ -1,0 +1,23 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+public class Pooka extends Monster {
+	private int pookaHeight = 53;
+	private int pookaWidth = 53;
+	private GameObjectHandler handler;
+
+	public Pooka(int x, int y, GameObjectHandler handler) {
+		super(x, y, handler);
+		this.hitBox = new Rectangle2D.Double(this.x, y, this.height, width);
+		this.handler = handler;
+		this.height = pookaHeight;
+		this.width = pookaWidth;
+	}
+
+	@Override
+	public void render(Graphics2D g2) {
+		g2.setColor(Color.YELLOW);
+		super.render(g2);
+	}
+}

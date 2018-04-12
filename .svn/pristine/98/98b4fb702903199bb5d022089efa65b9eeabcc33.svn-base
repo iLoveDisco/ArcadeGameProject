@@ -1,0 +1,175 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+public class Hero extends Character {
+	private int dx;
+	private int dy;
+	public Rectangle2D.Double rect;
+	public Rectangle2D.Double pumpRect;
+	private GameObjectHandler handler;
+//	private static final int SPEE = 53;
+//	private static final int WIDT = 53, HEIGH = 53;
+	private int pumpLength = 0;
+	private static final int pumpWidth = 10;
+	private int pumpDLength = 5;
+	public boolean pumpOut;
+	private boolean isInverted;
+	private boolean isPumpVertical;
+	public int startX;
+	public int startY;
+	public boolean dead;
+
+	public Hero(int x, int y, GameObjectHandler handler) {
+		super(x, y, handler);
+		this.startX = x;
+		this.startY = y;
+		this.dx = this.BLOCKSIZE;
+		this.dy = this.BLOCKSIZE;
+		this.handler = handler;
+		this.rect = new Rectangle2D.Double(x, y, this.BLOCKSIZE, this.BLOCKSIZE);
+		this.pumpRect = new Rectangle2D.Double(rect.getCenterX() + (this.rect.getWidth()), rect.getCenterY(),
+				pumpLength, pumpWidth);
+	}
+
+	public void moveLeft() {
+		if (!this.pumpOut) {
+			this.isPumpVertical = false;
+			this.isInverted = true;
+			this.updatePosition(-1 * dx, 0);
+		}
+	}
+
+	public void moveRight() {
+		if (!this.pumpOut) {
+			this.isPumpVertical = false;
+			this.isInverted = false;
+			this.updatePosition(dx, 0);
+		}
+	}
+
+	public void moveUp() {
+		if (!this.pumpOut) {
+			this.isPumpVertical = true;
+			this.isInverted = true;
+			this.updatePosition(0, -1 * dy);
+		}
+	}
+
+	public void moveDown() {
+		if (!this.pumpOut) {
+			this.isPumpVertical = true;
+			this.isInverted = false;
+			this.updatePosition(0, dy);
+		}
+	}
+
+	@Override
+	public boolean checkLegalMove(int dx, int dy) {
+		int futureX = this.x + dx;
+		int futureY = this.y + dy;
+
+		for (int i = 0; i < handler.rocks.size(); i++) {
+			Rock rock = handler.rocks.get(i);
+			if (rock.x == futureX && rock.y == futureY) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+	public void die() {
+		this.dead = true;
+	}
+
+	public void pump() {
+		// get a rectangle to show up to represent the pump shooting
+		this.pumpOut = true;
+	}
+
+	@Override
+	public void render(Graphics2D g2) {
+		g2.setColor(Color.MAGENTA);
+		this.rect = new Rectangle2D.Double(x, y, this.BLOCKSIZE, this.BLOCKSIZE);
+		g2.fill(this.rect);
+		if (!this.isPumpVertical && !this.isInverted) {
+			this.pumpRect = new Rectangle2D.Double(rect.getCenterX(), rect.getCenterY(), pumpLength, pumpWidth);
+		} else if (this.isPumpVertical && !this.isInverted) {
+			this.pumpRect = new Rectangle2D.Double(rect.getCenterX(), rect.getCenterY(), pumpWidth, pumpLength);
+		} else if (!this.isPumpVertical && this.isInverted) {
+			this.pumpRect = new Rectangle2D.Double(rect.getCenterX() - pumpLength, rect.getCenterY() - pumpWidth,
+					pumpLength, pumpWidth);
+		} else {
+			this.pumpRect = new Rectangle2D.Double(rect.getCenterX() - pumpWidth, rect.getCenterY() - pumpLength,
+					pumpWidth, pumpLength);
+		}
+		g2.setColor(Color.blue);
+		g2.fill(pumpRect);
+		if (this.pumpOut) {
+			this.pumpLength += this.pumpDLength;
+			if (pumpLength >= 120) {
+				this.pumpOut = false;
+			}
+		}
+		if (!this.pumpOut) {
+			if (this.pumpLength > 0) {
+				this.pumpLength -= this.pumpDLength;
+			}
+		}
+	}
+
+	@Override
+	void collideWith(GameObject other) {
+		other.collideWithHero(this);
+		other.collideWithPump(this.pumpRect);
+	}
+
+	@Override
+	void collideWithDirt(Dirt thisDirt) {
+		if (this.rect.intersects(thisDirt.rect) && !thisDirt.isDug) {
+			handler.points += 10;
+		}
+		if (this.rect.intersects(thisDirt.rect)) {
+			thisDirt.isDug = true;
+		}
+	}
+
+	@Override
+	void collideWithHero(Hero hero) {
+		// Does nothing
+	}
+
+	@Override
+	void collideWithMonster(Monster thisMonster) {
+		if (this.rect.intersects(thisMonster.hitBox) && thisMonster.height <= this.BLOCKSIZE) {
+			this.die();
+		}
+	}
+
+	@Override
+	void collideWithRock(Rock thisRock) {
+		if (this.rect.intersects(thisRock.rect) && thisRock.fallTimer >= 60) {
+			this.die();
+		}
+	}
+
+	@Override
+	void collideWithFire(Rectangle2D.Double fireRect) {
+		if (this.rect.intersects(fireRect)) {
+			this.die();
+		}
+	}
+
+	@Override
+	void collideWithPump(Rectangle2D.Double pumpRect) {
+		// Does nothing
+	}
+	
+	@Override
+	void collideWithFruit(Fruit thisFruit) {
+		if (this.rect.intersects(thisFruit.rect)) {
+			thisFruit.shouldRemove = true;
+			this.handler.points += 200;
+		}
+	}
+}

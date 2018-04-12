@@ -1,0 +1,26 @@
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+public class Rock extends GameObject{
+	
+	public Rectangle2D.Double rect;
+	private static final int rockWIDTH = 53, rockHEIGHT = 53;
+	public Rock(int x, int y, ID id, GameObjectHandler handler) {
+		super(x, y, id, handler);
+		this.rect = null;
+	}
+
+	@Override
+	public void tick() {
+		return;
+	}
+
+	@Override
+	public void render(Graphics2D g2) {
+		g2.setColor(java.awt.Color.GRAY);
+		this.rect = new Rectangle2D.Double(this.x, this.y, rockWIDTH, rockHEIGHT);
+		g2.fill(this.rect);
+	}
+
+
+}

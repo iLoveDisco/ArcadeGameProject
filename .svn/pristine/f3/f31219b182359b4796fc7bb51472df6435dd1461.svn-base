@@ -1,0 +1,134 @@
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+/**
+ * This class handles all objects on the screen(The hero, monsters, rocks, dirt, etc.)
+ * It's main job is to update the interactions between the classes.
+ */
+public class GameObjectHandler {
+	
+	public int fallenRocks = 0;
+	public int points = 0;
+	public boolean running = true;
+	public Hero hero;
+	ArrayList<Rock> rocks = new ArrayList<>();
+	ArrayList<Dirt> dirts = new ArrayList<>();
+	ArrayList<Fygar> fygars = new ArrayList<>();
+	ArrayList<Pooka> pookas = new ArrayList<>();
+	ArrayList<GameObject> powerups = new ArrayList<>();
+	//MainGame
+	public void render(Graphics2D g2) {
+		if(!this.running){
+			g2.setColor(Color.WHITE);
+			g2.setFont(new Font("Times New Roman", Font.PLAIN, 100));
+			g2.drawString("You Died Exit Game", 100, 200);
+			return;
+		}
+		for(Dirt d: dirts){
+			d.render(g2);
+		}
+		for(Rock r: rocks){
+			r.render(g2);
+		}
+		for(Fygar f: fygars){
+			f.render(g2);
+		}
+		for(Pooka p: pookas){
+			p.render(g2);
+		}
+		for(GameObject f : powerups){
+			f.render(g2);
+		}
+		this.hero.render(g2);
+		if(this.fallenRocks >= 2){
+			this.createFruit();
+			this.fallenRocks = 0;
+		}
+		g2.setFont(new Font("Times New Roman", Font.PLAIN, 50));
+		g2.drawString("Points: " + this.points, 200, 100);
+		handleCollisions();
+	}
+
+	private void handleCollisions() {
+		ArrayList<GameObject> objects = new ArrayList<>();
+		
+		for(Fygar f : this.fygars){
+			objects.add(f);
+		}
+		for(Pooka p : this.pookas){
+			objects.add(p);
+		}
+		for(Dirt d : this.dirts){
+			objects.add(d);
+		}
+		for(Rock r : this.rocks){
+			objects.add(r);
+		}
+		for(GameObject f : this.powerups){
+			objects.add(f);
+		}
+		objects.add(hero);
+		
+		for(GameObject o1: objects){
+			for(GameObject o2: objects){
+				o1.collideWith(o2);
+			}
+		}
+		
+		ArrayList<GameObject> objectsToRemove = new ArrayList<>();
+		
+		for(GameObject o1: objects){
+			if(o1.shouldRemove){
+				objectsToRemove.add(o1);
+			} 
+			
+		}
+		
+		for(GameObject o1: objectsToRemove){
+			if(o1.getClass().getSimpleName().equals("Rock")){
+				this.points += 400;
+				this.fallenRocks++;
+			}
+			fygars.remove(o1);
+			rocks.remove(o1);
+			dirts.remove(o1);
+			pookas.remove(o1);
+			powerups.remove(o1);
+		}
+	}
+	private void createFruit() {
+		this.powerups.add(new Fruit(439, 574, this));
+	}
+	
+	public void addRock(Rock rock){
+		rocks.add(rock);
+	}
+	public void addDirt(Dirt dirt){
+		dirts.add(dirt);
+	}
+	public void addHero(Hero hero){
+		this.hero = hero;
+	}
+	public void addPooka(Pooka pooka){
+		pookas.add(pooka);
+	}
+	public void addFygar(Fygar fygar){
+		fygars.add(fygar);
+	}
+	public void removeObject(GameObject object){
+	}
+	public void removeRock(Rock rock){
+		rocks.remove(rock);
+	}
+	public void removeDirt(Dirt dirt){
+		dirts.remove(dirt);
+	}
+
+	public void removePooka(Pooka pooka){
+		this.pookas.remove(pooka);
+	}
+	public void removeFygar(Fygar fygar){
+		this.fygars.remove(fygar);
+	}
+}

@@ -1,0 +1,14 @@
+-- Minimum fuctionalities --
+
+DONE - 1. Second kind of monster
+DONE - 2. Monsters can turn into ghost form and move through walls
+DONE - 3. Rocks drop after a delay when dirt has been removed from under them
+DONE - 4. Dropping rocks kill hero and monsters
+DONE - 5. Fruit appears in center
+DONE - 6. Points
+
+Everything works game tells you died and to quit.
+Monsters do not move up and down on purpose. If they turn into monsters on 
+vertical tunnels they will not move until they ghost again.
+
+CYCLE 3 COMMIT is the comment of the final version commit

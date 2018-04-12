@@ -1,0 +1,62 @@
+import java.awt.Graphics2D;
+import java.util.LinkedList;
+/**
+ * This class handles all objects on the screen(The hero, monsters, rocks, dirt, etc.)
+ * It's main job is to update the interactions between the classes.
+ */
+public class GameObjectHandler {
+	LinkedList<GameObject> objects = new LinkedList<>();
+	public int fallenRocks = 0;
+	public int points = 0;
+	
+	public void tick() {
+		for (int i = 0; i < objects.size(); i++) {
+			GameObject tempObject = objects.get(i);
+			tempObject.tick();
+		}
+	}
+	/**
+	 * Loops through every object and renders them.
+	 */
+	public void render(Graphics2D g2) {
+		for (int i = 0; i < objects.size(); i++) {
+			GameObject tempObject = objects.get(i);
+			tempObject.render(g2);
+		}
+		if(this.fallenRocks == 2){
+			this.createFruit();
+			this.fallenRocks++;
+		}
+		System.out.println(this.points);
+	}
+	
+	public void checkPoints(){
+		
+	}
+	
+	private void createFruit() {
+		this.addObject(new Fruit(424 + 15, 424 + 150, ID.Fruit, this));
+	}
+	
+	public void addObject(GameObject object){
+		objects.add(object);
+	}
+	
+	
+	public void removeObject(GameObject object){
+		objects.remove(object);
+	}
+	/**
+	 * Gets the Hero object from the objects
+	 */
+	public Hero getHero(){
+		for(int i = 0; i < objects.size(); i++){
+			GameObject object = objects.get(i);
+			if(object.getID().equals(ID.Hero)){
+				return (Hero) object;
+			}
+		}
+		return null;	
+	}
+	
+}

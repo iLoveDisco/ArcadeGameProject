@@ -1,0 +1,129 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+public class Hero extends Character {
+	private int dx;
+	private int dy;
+	public Rectangle2D.Double rect;
+	public Rectangle2D.Double pumpRect;
+	private GameObjectHandler handler;
+	private static final int SPEED = 53;
+	private static final int WIDTH = 53, HEIGHT = 53;
+	private int pumpWidth = 0;
+	private static final int pumpHeight = 10;
+	private int pumpDX = 5;
+	public boolean pumpOut;
+	public Hero(int x, int y, ID id, GameObjectHandler handler) {
+		super(x, y, id, handler);
+		this.dx = SPEED;
+		this.dy = SPEED;
+		this.handler = handler;
+		this.rect = new Rectangle2D.Double(x, y, WIDTH, HEIGHT);
+		this.pumpRect = new Rectangle2D.Double(rect.getCenterX() + (this.rect.getWidth()), rect.getCenterY(), pumpWidth, pumpHeight);
+	}
+
+	public void moveLeft() {
+		this.updatePosition(-1 * dx, 0);
+	}
+	
+	public void moveRight() {
+		this.updatePosition(dx, 0);
+	}
+
+	public void moveUp() {
+		this.updatePosition(0, -1 * dy);
+	}
+	public void moveDown() {
+		this.updatePosition(0, dy);
+	}
+	
+	/**
+	 * Gets the dirt object and checks whether hero is 
+	 * intersecting with the dirt rect. If it is, then the dirt digs itself.
+	 */
+	public void digDirt(){
+		Hero h = handler.getHero();	
+		for(int i = 0; i < handler.objects.size(); i++){
+			GameObject object = handler.objects.get(i);
+			if(object.getID().equals(ID.Dirt)){
+				Dirt dirt = (Dirt) object;
+				if(dirt.rect.intersects(h.rect)){
+					dirt.isDug = true;
+				}
+			}
+		}
+	}
+	
+	@Override
+	public boolean checkLegalMove(int dx, int dy) {
+		int futureX = this.x + dx;
+		int futureY = this.y + dy;
+	
+		for(int i = 0; i < handler.objects.size(); i++){
+			GameObject object = handler.objects.get(i);
+			if(object.getID().equals(ID.Rock)){
+				Rock rock = (Rock) object;
+				if(rock.x == futureX && rock.y == futureY){
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	public void checkIfHitMonster() {
+		for(int i = 0; i < handler.objects.size(); i++){
+			GameObject object = handler.objects.get(i);
+			if(object.getID().equals(ID.Pooka)){
+				Pooka pooka = (Pooka) object;
+				
+				if(rect.intersects(pooka.hitBox)){
+					this.die();
+					return;
+				}
+			}
+		}
+	}
+	
+	public void die() {
+		System.out.println("Hero died");
+	}
+	public void pump() {
+		// get a rectangle to show up to represent the pump shooting
+		this.pumpOut = true;
+	}
+	
+	@Override
+	public void tick() {
+
+	}
+
+	@Override
+	public void render(Graphics2D g2) {
+		this.checkIfHitMonster();
+		g2.setColor(Color.WHITE);
+		this.rect = new Rectangle2D.Double(x, y, WIDTH, HEIGHT);
+		g2.fill(this.rect);
+		this.pumpRect = new Rectangle2D.Double(rect.getCenterX() + rect.getWidth() / 2, rect.getCenterY(), pumpWidth, pumpHeight);
+		g2.setColor(Color.blue);
+		g2.fill(pumpRect);
+		if(this.pumpOut) {
+			
+			this.pumpWidth += this.pumpDX;
+			if(pumpWidth >= 120) {
+				this.pumpOut = false;
+			}
+		}
+		if(!this.pumpOut) {
+			if(this.pumpWidth > 0) {
+				this.pumpWidth -= this.pumpDX;
+			}
+		}
+	}
+
+
+	}
+
+	

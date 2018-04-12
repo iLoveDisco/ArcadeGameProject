@@ -1,0 +1,34 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+public class Fruit extends GameObject{
+	private GameObjectHandler handler;
+	public Rectangle2D.Double rect;
+	private static final int fruitWIDTH = 53, fruitHEIGHT = 53;
+	public Fruit(int x, int y, ID id, GameObjectHandler handler) {
+		super(x, y, id, handler);
+		this.handler = handler;
+		this.rect = new Rectangle2D.Double(this.x, this.y, fruitWIDTH, fruitHEIGHT);
+	}
+
+	@Override
+	public void tick() {
+		// TODO Auto-generated method stub.
+	}
+
+	@Override
+	public void render(Graphics2D g2) {
+		g2.setColor(Color.CYAN);
+		g2.fill(this.rect);
+		if(this.handler.getHero().rect.intersects(this.rect)){
+			this.die();
+		}
+	}
+
+	private void die() {
+		this.handler.removeObject(this);
+		handler.points += 100;
+	}
+
+}

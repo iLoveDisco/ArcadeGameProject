@@ -1,0 +1,24 @@
+public abstract class Character extends GameObject{
+	
+	private GameObjectHandler handler;
+	public Character(int x, int y, ID id, GameObjectHandler handler) {
+		super(x, y, id, handler);
+		this.handler = handler;
+	}
+	public void updatePosition(int dx, int dy){
+		if(this.x + dx < 15 || this.x + dx > 800) {
+			return;
+		}
+		if(this.y + dy < 150 || this.y + dy > 892) {
+			return;
+		}
+		if(this.checkLegalMove(dx, dy)){
+			this.x += dx;
+			this.y += dy;
+		} 
+	}
+	
+	public abstract boolean checkLegalMove(int dx, int dy);
+	
+	
+}

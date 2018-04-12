@@ -1,0 +1,70 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
+
+public class OneUp extends GameObject {
+	public Rectangle2D.Double rect;
+
+	public OneUp(int x, int y, GameObjectHandler handler) {
+		super(x, y, handler);
+		this.rect = new Rectangle2D.Double(this.x, this.y, this.BLOCKSIZE, this.BLOCKSIZE);
+	}
+
+	@Override
+	public void render(Graphics2D g2) {
+		g2.setColor(Color.MAGENTA);
+		g2.fill(this.rect);
+	}
+
+	@Override
+	public void die() {
+		// does nothing
+	}
+
+	@Override
+	void collideWith(GameObject other) {
+		other.collideWithOneUp(this);
+	}
+
+	@Override
+	void collideWithDirt(Dirt thisDirt) {
+		// does nothing
+	}
+
+	@Override
+	void collideWithHero(Hero hero) {
+		hero.collideWithOneUp(this);
+	}
+
+	@Override
+	void collideWithMonster(Monster thisMonster) {
+		// does nothing
+	}
+
+	@Override
+	void collideWithRock(Rock thisRock) {
+		// does nothing
+	}
+
+	@Override
+	void collideWithFire(Double fireRect) {
+		// does nothing
+	}
+
+	@Override
+	void collideWithPump(Double pumpRect) {
+		// does nothing
+	}
+
+	@Override
+	void collideWithFruit(Fruit fruit) {
+		// does nothing
+	}
+
+	@Override
+	void collideWithOneUp(OneUp oneUp) {
+		// Does nothing		
+	}
+
+}

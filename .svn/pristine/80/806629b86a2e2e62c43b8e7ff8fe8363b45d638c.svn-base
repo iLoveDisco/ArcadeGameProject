@@ -1,0 +1,77 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+
+public class Dirt extends GameObject{
+	public boolean isDug;
+	public Rectangle2D.Double rect;
+	private GameObjectHandler handler;
+	private static final int dirtWidth = 53, dirtHeight = 53;
+
+	public Dirt(int x, int y, ID id, GameObjectHandler handler) {
+		super(x, y, id, handler);
+		this.rect = new Rectangle2D.Double(x, y, dirtWidth, dirtHeight);
+		this.handler = handler;
+	}
+
+	@Override
+	public void render(Graphics2D g2) {
+		if(isDug) {
+			g2.setColor(Color.BLACK);
+			g2.fill(this.rect);
+			return;
+		}
+		g2.setColor(Color.ORANGE);
+		g2.fill(this.rect);
+	}
+
+	@Override
+	void collideWith(GameObject other) {
+		other.collideWithDirt(this);
+		
+	}
+
+	@Override
+	void collideWithDirt(Dirt thisDirt) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithHero(Hero hero) {
+		hero.collideWithDirt(this);
+		
+	}
+
+	@Override
+	void collideWithMonster(Monster thisMonster) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithRock(Rock thisRock) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithFire(Fygar thisFygar) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithPump(Hero thisHero) {
+		// TODO Auto-generated method stub.
+		
+	}
+
+	@Override
+	void collideWithFruit(Fruit fruit) {
+		// TODO Auto-generated method stub.
+		
+	}
+	
+}

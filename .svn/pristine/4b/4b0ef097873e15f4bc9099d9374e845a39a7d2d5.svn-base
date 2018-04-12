@@ -1,0 +1,35 @@
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+public abstract class GameObject {
+	protected int x, y;
+	protected int velX, velY;
+	protected boolean shouldRemove;
+
+	public GameObject(int x, int y, GameObjectHandler handler) {
+		this.x = x;
+		this.y = y;
+	}
+
+	public abstract void render(Graphics2D g2);
+
+	// Handles collisions\\
+	abstract void collideWith(GameObject other);
+
+	abstract void collideWithDirt(Dirt thisDirt);
+
+	abstract void collideWithHero(Hero hero);
+
+	abstract void collideWithMonster(Monster thisMonster);
+
+	abstract void collideWithRock(Rock thisRock);
+
+	abstract void collideWithFire(Rectangle2D.Double fireRect);
+
+	abstract void collideWithPump(Rectangle2D.Double pumpRect);
+	
+	abstract void collideWithFruit(Fruit fruit);
+
+	// ===================\\
+
+}

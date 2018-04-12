@@ -1,0 +1,8 @@
+---Minimum Functionalities---
+
+Run it from main. Arrow keys are to move.
+
+DONE - 1. Levels(3) load from text files.
+DONE - 2. Dirt that player can dig through.
+DONE - 3. A hero that can move.
+DONE - 4. Switching between loaded levels with U and D.

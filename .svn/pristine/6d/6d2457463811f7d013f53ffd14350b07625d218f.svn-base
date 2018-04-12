@@ -1,0 +1,135 @@
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.swing.Timer;
+
+/**
+ * This class starts the gameloop and creates the window.
+ * 
+ * @authors Eric Tu, Denny Colomes, David Gruninger
+ */
+
+public class Main extends Canvas {
+	private static final int SIZE = 1000;
+
+	private boolean running = false;
+	public boolean isPaused;
+	public Level level;
+	public boolean isStartMenu = true;
+	private BufferedImage image;
+	private int musicTimer = 0;
+	public GameObjectHandler handler;
+	public boolean isWinScreen = false;
+	
+	/**
+	 * Constructer:
+	 *  - Creates the JFrame Window
+	 *  - Reads the level.txt files
+	 */
+	public Main() {
+		
+		new Window(SIZE, SIZE, "DIG DUG", this);
+		this.handler = new GameObjectHandler();
+		this.level = new Level(handler);
+		this.level.readFile();
+	}
+	/**
+	 * Starts the timer game loop
+	 */
+	public void start() {
+		this.playMainTheme();
+		Timer timer = new Timer(15, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Main.this.render();
+			}
+		});
+		timer.start();
+	}
+
+	/**
+	 * Is constantly called to update the game's current state.
+	 */
+	public void render() {
+		this.running = true;
+		BufferStrategy bs = this.getBufferStrategy();
+		if (bs == null) {
+			this.createBufferStrategy(3);
+			return;
+		}
+		Graphics2D g2 = (Graphics2D) bs.getDrawGraphics();
+
+		g2.setColor(Color.BLACK);// Background of the game.
+		g2.fillRect(0, 0, SIZE, SIZE);
+		
+		if(isStartMenu) { //Brings up the main menu
+			try {
+				image = ImageIO.read(new File("IronManMainScreen.png"));
+			} catch (IOException e) {
+				throw new RuntimeException("Error drawing iron man face: " + e);
+			}
+			g2.drawImage(image, 0, 0, null);
+			
+		}
+		
+		else
+		if (!this.isPaused) { //Stops all game operations
+			handler.render(g2);
+		} else{
+			g2.setColor(Color.ORANGE);
+			g2.setFont(new Font("Times New Roman", Font.BOLD, 60));
+			g2.drawString("PAUSED Press P to unpause", 120, 400);
+		}
+		
+		if(isWinScreen) {
+			try {
+				image = ImageIO.read(new File("IronManVictory.png"));
+			} catch (IOException e) {
+				throw new RuntimeException("Error drawing iron man face: " + e);
+			}
+			g2.drawImage(image,0,0,null);
+		}
+		
+		if (this.handler.monsters.size() == 0 && !(this.level.currentLevel >= 11)) {
+			this.level.currentLevel++;
+			if(this.level.currentLevel > this.level.numLevels) {
+				this.isWinScreen = true;
+			}
+			this.level.readFile();
+		}
+		g2.dispose();
+		bs.show();
+		
+	}
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		new Main();
+	}
+	public void playMainTheme() {//Plays the music
+	    try {
+	    	//Property of Marvel Entertainment
+	        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("FinalAvengersTheme6500.wav").getAbsoluteFile());
+	        Clip clip = AudioSystem.getClip();
+	        clip.open(audioInputStream);
+	        clip.start();
+	    } catch(Exception ex) {
+	        System.out.println("Error with playing sound.");
+	        ex.printStackTrace();
+	    }
+	}
+}

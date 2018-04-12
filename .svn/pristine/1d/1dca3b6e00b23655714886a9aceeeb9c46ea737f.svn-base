@@ -1,0 +1,90 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+public class Fygar extends Monster {
+	private int fygarHeight = 53;
+	private int fygarWidth = 53;
+	private GameObjectHandler handler;
+	protected boolean isFireInverted = false;
+	protected boolean isFireVertical = false;
+	protected int fireLength = 90;
+	protected int fireWidth = 20;
+	protected int fireTimer = 0;
+	protected boolean fireOut;
+	public Fygar(int x, int y, GameObjectHandler handler) {
+		super(x, y, handler);
+		this.height = fygarHeight;
+		this.width = fygarWidth;
+		this.hitBox = new Rectangle2D.Double(this.x, y, this.height, this.width);
+		this.handler = handler;
+		super.fireRect = new Rectangle2D.Double(hitBox.getCenterX(), hitBox.getCenterY(), fireLength, fireWidth);
+	}
+
+	@Override
+	public void render(Graphics2D g2) {
+		g2.setColor(Color.GREEN);
+		super.render(g2);
+		this.fireTime();
+		if (this.hitBox.intersects(this.handler.hero.pumpRect)) {
+			this.dx = 0;
+			this.fireOut = false;
+			this.inflate();
+		}
+		if (this.dx < 0) {
+			isFireInverted = true;
+		}
+		if (this.dx > 0) {
+			isFireInverted = false;
+		}
+		if (this.fireOut) {
+			if (!isFireInverted && !isFireVertical) {
+				super.fireRect = new Rectangle2D.Double(hitBox.getCenterX() + (hitBox.getWidth() / 2),
+						hitBox.getCenterY(), fireLength, fireWidth);
+				g2.setColor(Color.RED);
+				g2.fill(fireRect);
+			}
+			if (isFireInverted && !isFireVertical) {
+				super.fireRect = new Rectangle2D.Double(hitBox.getCenterX() - fireLength - hitBox.getWidth() / 2,
+						hitBox.getCenterY(), fireLength, fireWidth);
+				g2.setColor(Color.RED);
+				g2.fill(fireRect);
+			}
+		} else {
+			super.fireRect.width = 0;
+		}
+
+	}
+
+	public void breathFire() {
+		this.fireOut = true;
+		
+	}
+
+	private void fireTime() {
+		if (this.fireTimer >= 420) {
+			this.fireOut = false;
+			this.fireTimer = 0;
+			if (isFireInverted) {
+				this.dx = -1;
+			} else {
+				this.dx = 1;
+			}
+			return;
+		}
+		if (this.fireTimer >= 390) {
+			this.breathFire();
+			this.fireTimer++;
+		} else {
+			this.fireTimer++;
+		}
+		
+		if (this.fireTimer >= 350) {
+			this.dx = 0;
+			this.fireTimer++;
+		} else {
+			this.fireTimer++;
+		}
+	}
+
+}
